@@ -1,35 +1,33 @@
 import { useEffect, useState } from "react"
-
-const API_KEY = import.meta.env.VITE_EXCHANGE_API_KEY
+import AmountInput from "../components/AmountInput"
+import CurrencySelector from "../components/CurrencySelector"
+import ConversionResult from "../components/ConversionResult"
+import { fetchExchangeRates } from "../services/exchangeApi"
 
 function Converter() {
-  const [amount, setAmount] = useState(1)
+  const [amount, setAmount] = useState(5)
   const [fromCurrency, setFromCurrency] = useState("USD")
   const [toCurrency, setToCurrency] = useState("NGN")
   const [rates, setRates] = useState({})
   const [result, setResult] = useState(null)
   const [error, setError] = useState("")
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    async function fetchRates() {
+    async function loadRates() {
       try {
+        setLoading(true)
         setError("")
-        const response = await fetch(
-          `https://v6.exchangerate-api.com/v6/${API_KEY}/latest/${fromCurrency}`
-        )
-        const data = await response.json()
-
-        if (data.result !== "success") {
-          throw new Error("Failed to fetch exchange rates")
-        }
-
-        setRates(data.conversion_rates)
-      } catch (err) {
-        setError("Unable to fetch exchange rates. Try again later.")
+        const data = await fetchExchangeRates(fromCurrency)
+        setRates(data)
+      } catch {
+        setError("Unable to fetch exchange rates.")
+      } finally {
+        setLoading(false)
       }
     }
 
-    fetchRates()
+    loadRates()
   }, [fromCurrency])
 
   useEffect(() => {
@@ -38,6 +36,8 @@ function Converter() {
     }
   }, [amount, toCurrency, rates])
 
+  const currencies = Object.keys(rates)
+
   return (
     <div className="min-h-screen flex items-center justify-center px-4">
       <div className="bg-white p-6 rounded-xl shadow-md w-full max-w-md">
@@ -45,56 +45,39 @@ function Converter() {
           Currency Converter
         </h2>
 
+        {loading && (
+          <p className="text-center text-gray-500">Loading rates…</p>
+        )}
+
         {error && (
           <p className="text-red-500 text-sm mb-3 text-center">{error}</p>
         )}
 
-        <div className="space-y-4">
-          <input
-            type="number"
-            value={amount}
-            onChange={(e) => setAmount(Number(e.target.value))}
-            className="w-full border rounded-lg px-3 py-2"
-            placeholder="Amount"
-          />
+        {!loading && (
+          <div className="space-y-4">
+            <AmountInput amount={amount} onChange={setAmount} />
 
-          <div className="flex gap-2">
-            <select
-              value={fromCurrency}
-              onChange={(e) => setFromCurrency(e.target.value)}
-              className="w-1/2 border rounded-lg px-3 py-2"
-            >
-              {Object.keys(rates).map((currency) => (
-                <option key={currency} value={currency}>
-                  {currency}
-                </option>
-              ))}
-            </select>
-
-            <select
-              value={toCurrency}
-              onChange={(e) => setToCurrency(e.target.value)}
-              className="w-1/2 border rounded-lg px-3 py-2"
-            >
-              {Object.keys(rates).map((currency) => (
-                <option key={currency} value={currency}>
-                  {currency}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {result !== null && (
-            <div className="text-center mt-4">
-              <p className="text-lg font-semibold">
-                {amount} {fromCurrency} =
-              </p>
-              <p className="text-2xl font-bold text-blue-600">
-                {result.toFixed(2)} {toCurrency}
-              </p>
+            <div className="flex gap-2">
+              <CurrencySelector
+                value={fromCurrency}
+                onChange={setFromCurrency}
+                currencies={currencies}
+              />
+              <CurrencySelector
+                value={toCurrency}
+                onChange={setToCurrency}
+                currencies={currencies}
+              />
             </div>
-          )}
-        </div>
+
+            <ConversionResult
+              amount={amount}
+              from={fromCurrency}
+              to={toCurrency}
+              result={result}
+            />
+          </div>
+        )}
       </div>
     </div>
   )
