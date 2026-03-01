@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import AmountInput from "../components/AmountInput"
 import CurrencySelector from "../components/CurrencySelector"
 import ConversionResult from "../components/ConversionResult"
+import Favorites from "../components/Favorites"
 import { fetchExchangeRates } from "../services/exchangeApi"
 
 function Converter() {
@@ -12,6 +13,16 @@ function Converter() {
   const [result, setResult] = useState(null)
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
+  const [favorites, setFavorites] = useState([])
+
+  useEffect(() => {
+    const stored = localStorage.getItem("favorites")
+    if (stored) setFavorites(JSON.parse(stored))
+  }, [])
+
+  useEffect(() => {
+    localStorage.setItem("favorites", JSON.stringify(favorites))
+  }, [favorites])
 
   useEffect(() => {
     async function loadRates() {
@@ -35,6 +46,21 @@ function Converter() {
       setResult(amount * rates[toCurrency])
     }
   }, [amount, toCurrency, rates])
+
+  function addFavorite() {
+    const exists = favorites.some(
+      (fav) => fav.from === fromCurrency && fav.to === toCurrency
+    )
+
+    if (!exists) {
+      setFavorites([...favorites, { from: fromCurrency, to: toCurrency }])
+    }
+  }
+
+  function selectFavorite(fav) {
+    setFromCurrency(fav.from)
+    setToCurrency(fav.to)
+  }
 
   const currencies = Object.keys(rates)
 
@@ -70,12 +96,21 @@ function Converter() {
               />
             </div>
 
+            <button
+              onClick={addFavorite}
+              className="w-full py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              ⭐ Save Favorite
+            </button>
+
             <ConversionResult
               amount={amount}
               from={fromCurrency}
               to={toCurrency}
               result={result}
             />
+
+            <Favorites favorites={favorites} onSelect={selectFavorite} />
           </div>
         )}
       </div>
