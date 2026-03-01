@@ -1,16 +1,81 @@
-# React + Vite
+# Currency Converter Application
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A responsive **Currency Converter** built with **React**, **JavaScript**, and **Tailwind CSS** that allows users to convert amounts between different currencies using real-time exchange rates fetched from a public API.
 
-Currently, two official plugins are available:
+This project demonstrates integration with external APIs, dynamic state management, and responsive UI design in a frontend web development environment.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Table of Contents
 
-## React Compiler
+* [Features](#features)
+* [Technologies Used](#technologies-used)
+* [Installation](#installation)
+* [Usage](#usage)
+* [Error Handling](#error-handling)
+* [Stretch Goals](#stretch-goals)
+* [License](#license)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-## Expanding the ESLint configuration
+## Features
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+* **Real-time Exchange Rates**: Fetches live currency exchange rates using a public API.
+* **Currency Conversion**: Convert amounts between selected currencies.
+* **Exchange Rate Info**: Displays the current exchange rate for the selected currency pair.
+* **Responsive Design**: Works seamlessly across desktop, tablet, and mobile devices using Tailwind CSS.
+* **Reusable Components**: Modular React components for currency selection, input, and conversion result.
+* **Error Handling**: User-friendly messages for network errors, invalid API responses, or unsupported currencies.
+
+
+## Technologies Used
+
+* **Frontend**: React, JavaScript, HTML, CSS
+* **Styling**: Tailwind CSS
+* **API**: [ExchangeRate-API](https://www.exchangerate-api.com/)
+* **Deployment**: Onrender
+* **Live Website**: https://currenzy-4hxz.onrender.com/
+
+
+## Installation
+
+1. **Clone the repository**
+
+```bash
+git clone https://github.com/yourusername/currency-converter.git
+cd currency-converter
+```
+
+2. **Install dependencies**
+
+```bash
+npm install
+```
+
+3. **Run the development server**
+
+```bash
+npm run dev
+```
+
+4. **Open the app**
+
+Open [http://localhost:5173](http://localhost:5173) in your browser (if using Vite).
+
+---
+
+## Usage
+
+1. Select the **base currency** (currency you want to convert from).
+2. Select the **target currency** (currency you want to convert to).
+3. Enter the **amount** you want to convert.
+4. View the **converted amount** and the **current exchange rate**.
+
+
+## Error Handling
+
+* Displays alerts if:
+
+  * Network requests fail
+  * API responses are invalid
+  * Selected currency is unsupported
+
+* Ensures the user experience is smooth even when errors occur.
+
