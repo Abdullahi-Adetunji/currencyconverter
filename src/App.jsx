@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import Landing from './pages/Landing';
 import Converter from './pages/Converter';
+// NEW: Import the History page
+import History from './pages/History'; 
 import Settings from './components/Settings';
 
 export default function App() {
@@ -15,17 +17,15 @@ export default function App() {
       case 'settings':
         return <Settings />;
       case 'history':
-        return (
-          <div className="flex justify-center items-center h-[60vh] text-slate-500 dark:text-slate-400">
-            History feature coming soon...
-          </div>
-        );
+        // NEW: Return the imported History component
+        return <History />; 
       default:
         return <Landing onStart={() => setCurrentView('converter')} />;
     }
   };
 
   return (
+
     <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-[#0B0F19] dark:text-white font-sans selection:bg-violet-500/30 transition-colors duration-300">
       
       {currentView !== 'landing' && (

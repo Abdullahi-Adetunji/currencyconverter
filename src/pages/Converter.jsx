@@ -17,15 +17,36 @@ export default function Converter() {
     fetchRates(from).then(setRates)
   }, [from])
 
-  useEffect(() => {
+  // NEW: This handles the math and saves the history when the button is clicked
+  const handleConvert = () => {
     if (rates[to]) {
-      setResult((amount * rates[to]).toFixed(2))
+      const calculatedResult = (amount * rates[to]).toFixed(2);
+      setResult(calculatedResult);
+
+      // Create a record object
+      const historyRecord = {
+        id: Date.now(),
+        date: new Date().toLocaleDateString("en-US", { 
+          month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" 
+        }),
+        from,
+        to,
+        amount,
+        result: calculatedResult,
+        rate: rates[to].toFixed(4)
+      };
+
+      // Pull existing history, add the new one to the front, and cap it at 30 records
+      const existingHistory = JSON.parse(localStorage.getItem("currencyHistory")) || [];
+      const updatedHistory = [historyRecord, ...existingHistory].slice(0, 30);
+      localStorage.setItem("currencyHistory", JSON.stringify(updatedHistory));
     }
-  }, [amount, to, rates])
+  }
 
   const handleSwap = () => {
     setFrom(to)
     setTo(from)
+    setResult(null) // Clear the result so the user knows to click Convert again
   }
 
   return (
@@ -36,10 +57,8 @@ export default function Converter() {
         <p className="text-sm text-slate-500 dark:text-slate-400">Real-time exchange rates • Updated every second</p>
       </div>
 
-      {/* Main Converter Card */}
       <div className="bg-white dark:bg-[#151B2B] border border-slate-200 dark:border-slate-800 rounded-3xl p-2 w-full max-w-lg shadow-xl dark:shadow-2xl relative space-y-1 transition-colors duration-300">
         
-        {/* You Send Section */}
         <div className="bg-slate-50 hover:bg-slate-100 dark:bg-[#1C2333] dark:hover:bg-[#20283A] transition-colors rounded-2xl p-5 flex flex-col gap-3">
           <label className="text-slate-500 dark:text-slate-400 text-sm font-medium">You send</label>
           <div className="flex justify-between items-center gap-4">
@@ -48,7 +67,6 @@ export default function Converter() {
           </div>
         </div>
 
-        {/* Swap Button */}
         <div className="absolute left-1/2 top-[108px] -translate-x-1/2 -translate-y-1/2 z-10">
           <button 
             onClick={handleSwap}
@@ -58,7 +76,6 @@ export default function Converter() {
           </button>
         </div>
 
-        {/* You Receive Section */}
         <div className="bg-slate-50 hover:bg-slate-100 dark:bg-[#1C2333] dark:hover:bg-[#20283A] transition-colors rounded-2xl p-5 flex flex-col gap-3">
           <label className="text-slate-500 dark:text-slate-400 text-sm font-medium">You receive</label>
           <div className="flex justify-between items-center gap-4">
@@ -69,7 +86,11 @@ export default function Converter() {
 
         <div className="p-4">
           <ConversionResult rate={rates[to]} from={from} to={to} />
-          <button className="w-full bg-violet-600 hover:bg-violet-700 dark:hover:bg-violet-500 text-white font-semibold py-4 rounded-xl mt-4 transition-colors shadow-lg shadow-violet-600/20">
+          {/* NEW: Added onClick={handleConvert} to the button */}
+          <button 
+            onClick={handleConvert}
+            className="w-full bg-violet-600 hover:bg-violet-700 dark:hover:bg-violet-500 text-white font-semibold py-4 rounded-xl mt-4 transition-colors shadow-lg shadow-violet-600/20"
+          >
             Convert Currency
           </button>
         </div>
