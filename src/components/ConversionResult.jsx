@@ -1,16 +1,7 @@
-function ConversionResult({ amount, from, to, result }) {
-  if (result === null) return null
-
+export default function ConversionResult({ result }) {
   return (
-    <div className="text-center mt-4">
-      <p className="text-lg font-semibold">
-        {amount} {from} =
-      </p>
-      <p className="text-2xl font-bold text-blue-600">
-        {result.toFixed(2)} {to}
-      </p>
+    <div className="text-center text-xl font-semibold text-indigo-600">
+      {result ? `Converted Amount: ${result}` : "—"}
     </div>
   )
 }
-
-export default ConversionResult

@@ -14,3 +14,10 @@ export async function fetchExchangeRates(baseCurrency) {
 
   return data.conversion_rates
 }
+
+
+export async function fetchRates(baseCurrency) {
+  const res = await fetch(`${BASE_URL}/${API_KEY}/latest/${baseCurrency}`)
+  const data = await res.json()
+  return data.conversion_rates
+}

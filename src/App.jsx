@@ -1,17 +1,14 @@
+import { useState } from "react"
 import Landing from "./pages/Landing"
 import Converter from "./pages/Converter"
-import { useState } from "react"
 
 function App() {
-  const [currentPage, setCurrentPage] = useState("landing")
+  const [page, setPage] = useState("landing")
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {currentPage === "landing" && (
-        <Landing onStart={() => setCurrentPage("converter")} />
-      )}
-
-      {currentPage === "converter" && <Converter />}
+    <div className="min-h-screen bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500">
+      {page === "landing" && <Landing onStart={() => setPage("converter")} />}
+      {page === "converter" && <Converter />}
     </div>
   )
 }
